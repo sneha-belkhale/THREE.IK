@@ -45,7 +45,7 @@ function setQuaternionFromDirection(direction, up, target) {
   var z = t3;
   var m = m1;
   var el = m1.elements;
-  z.copy(direction);
+  z.copy(direction).multiplyScalar(-1);
   x.crossVectors(up, z);
   if (x.lengthSq() === 0) {
     if (Math.abs(up.z) === 1) {
@@ -864,7 +864,7 @@ var BoneHelper = function (_Object3D) {
     } else {
       _this.boneMesh = new three.Object3D();
     }
-    _this.boneMesh.position.z = height / 2;
+    _this.boneMesh.position.z = -height / 2;
     _this.add(_this.boneMesh);
     _this.axesHelper = new three.AxesHelper(axesSize);
     _this.add(_this.axesHelper);
