@@ -69,12 +69,12 @@
                 var currentBone = boneGroup
                 for (let i = 0; i < 4; i++) {
                   currentBone = currentBone.children[0]
-                  var constraints = [new IK.IKBallConstraint(180)];
+                  var constraints = [new IK.IKBallConstraint(360)];
                   const target = i === 3 ? this.target : null;
                   chain.add(new IK.IKJoint(currentBone, { constraints }), { target });
                 }
                 ik.add(chain);
-
+                console.log(chain)
                 const helper = new IK.IKHelper(ik);
                 this.scene.add(helper);
 
@@ -88,7 +88,7 @@
 
             update() {
               if(this.target){
-                this.target.position.z = 1+Math.sin(0.01*Date.now())
+                this.target.position.y = 1+4*Math.sin(0.005*performance.now())
               }
             }
         };
