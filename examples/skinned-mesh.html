@@ -69,7 +69,7 @@
                 var currentBone = boneGroup
                 for (let i = 0; i < 4; i++) {
                   currentBone = currentBone.children[0]
-                  var constraints = [new IK.IKBallConstraint(360)];
+                  var constraints = [new IK.IKBallConstraint(90)];
                   const target = i === 3 ? this.target : null;
                   chain.add(new IK.IKJoint(currentBone, { constraints }), { target });
                 }

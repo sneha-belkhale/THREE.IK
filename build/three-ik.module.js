@@ -41,7 +41,7 @@ function setQuaternionFromDirection(direction, up, target) {
   var z = t3;
   var m = m1;
   var el = m1.elements;
-  z.copy(direction).multiplyScalar(-1);
+  z.copy(direction).multiplyScalar(1);
   x.crossVectors(up, z);
   if (x.lengthSq() === 0) {
     if (Math.abs(up.z) === 1) {
@@ -452,7 +452,7 @@ var IKJoint = function () {
   }, {
     key: '_getWorldDirection',
     value: function _getWorldDirection(joint) {
-      return new Vector3().subVectors(this._getWorldPosition(), joint._getWorldPosition()).normalize();
+      return new Vector3().subVectors(joint._getWorldPosition(), this._getWorldPosition()).normalize();
     }
   }, {
     key: '_updateWorldPosition',
@@ -505,7 +505,7 @@ var IKJoint = function () {
   }, {
     key: '_getWorldDistance',
     value: function _getWorldDistance(joint) {
-      return this._worldPosition.distanceTo(joint.isIKJoint ? joint._getWorldPosition() : getWorldPosition(joint, new Vector3()));
+      return -this._worldPosition.distanceTo(joint.isIKJoint ? joint._getWorldPosition() : getWorldPosition(joint, new Vector3()));
     }
   }]);
   return IKJoint;
@@ -860,7 +860,7 @@ var BoneHelper = function (_Object3D) {
     } else {
       _this.boneMesh = new Object3D();
     }
-    _this.boneMesh.position.z = -height / 2;
+    _this.boneMesh.position.z = height / 2;
     _this.add(_this.boneMesh);
     _this.axesHelper = new AxesHelper(axesSize);
     _this.add(_this.axesHelper);

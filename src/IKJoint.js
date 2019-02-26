@@ -121,7 +121,7 @@ class IKJoint {
    * @private
    */
   _getWorldDirection(joint) {
-    return new Vector3().subVectors(this._getWorldPosition(), joint._getWorldPosition()).normalize();
+    return new Vector3().subVectors(joint._getWorldPosition(),this._getWorldPosition()).normalize();
   }
 
   /**
@@ -196,7 +196,7 @@ class IKJoint {
    * @return {THREE.Vector3}
    */
   _getWorldDistance(joint) {
-    return this._worldPosition.distanceTo(joint.isIKJoint ? joint._getWorldPosition() : getWorldPosition(joint, new Vector3()));
+    return -this._worldPosition.distanceTo(joint.isIKJoint ? joint._getWorldPosition() : getWorldPosition(joint, new Vector3()));
   }
 }
 

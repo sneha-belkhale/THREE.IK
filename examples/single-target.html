@@ -84,7 +84,7 @@ class SingleTargetApp extends IKApp {
       ik.add(chain);
 
       const pivot = new THREE.Object3D();
-      pivot.rotation.x = -Math.PI / 2;
+      pivot.rotation.x = Math.PI / 2;
       pivot.add(ik.getRootBone());
       const theta = (i / TOTAL_SYSTEM_COUNT) * Math.PI * 2;
       pivot.position.set(Math.sin(theta) * 3 , 0, Math.cos(theta) * 3);
