@@ -45,7 +45,7 @@ function setQuaternionFromDirection(direction, up, target) {
   var z = t3;
   var m = m1;
   var el = m1.elements;
-  z.copy(direction).multiplyScalar(1);
+  z.copy(direction);
   x.crossVectors(up, z);
   if (x.lengthSq() === 0) {
     if (Math.abs(up.z) === 1) {
@@ -456,7 +456,7 @@ var IKJoint = function () {
   }, {
     key: '_getWorldDirection',
     value: function _getWorldDirection(joint) {
-      return new three.Vector3().subVectors(joint._getWorldPosition(), this._getWorldPosition()).normalize();
+      return new three.Vector3().subVectors(this._getWorldPosition(), joint._getWorldPosition()).normalize();
     }
   }, {
     key: '_updateWorldPosition',
@@ -509,7 +509,7 @@ var IKJoint = function () {
   }, {
     key: '_getWorldDistance',
     value: function _getWorldDistance(joint) {
-      return -this._worldPosition.distanceTo(joint.isIKJoint ? joint._getWorldPosition() : getWorldPosition(joint, new three.Vector3()));
+      return this._worldPosition.distanceTo(joint.isIKJoint ? joint._getWorldPosition() : getWorldPosition(joint, new three.Vector3()));
     }
   }]);
   return IKJoint;

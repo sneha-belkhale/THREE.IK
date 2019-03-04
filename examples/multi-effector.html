@@ -106,7 +106,7 @@ class MultiEffector extends IKApp {
     this.iks.push(ik);
 
     const pivot = new THREE.Object3D();
-    pivot.rotation.x = Math.PI / 2;
+    pivot.rotation.x = -Math.PI / 2;
     pivot.add(ik.getRootBone());
     this.scene.add(pivot);
   }
