@@ -39,6 +39,7 @@
     <script src="scripts/FBXLoader.js"></script>
     <script src="scripts/IKApp.js"></script>
     <script src="scripts/AxisUtils.js"></script>
+    <script src="scripts/GLTFLoader.js"></script>
 
     <script src="../build/three-ik.js"></script>
     <script>
@@ -51,7 +52,7 @@
 
             setupIK() {
 
-                var fbxLoader = new THREE.FBXLoader()
+                var fbxLoader = new THREE.FBXLoader();
                 fbxLoader.load('assets/rigTest-03.fbx', (rigGroup) => {
                 this.scene.add(rigGroup)
                 rigGroup.updateMatrixWorld()

@@ -1,45 +1,49 @@
-const t = new THREE.Vector3();
-const q = new THREE.Quaternion();
-const p = new THREE.Plane();
-const FORWARD = new THREE.Vector3(0,0,1);
-var RESETQUAT = new THREE.Quaternion();
+  const t = new THREE.Vector3();
+  const q = new THREE.Quaternion();
+  const p = new THREE.Plane();
+  const FORWARD = new THREE.Vector3(0,0,1);
+  var RESETQUAT = new THREE.Quaternion();
 
-function getAlignmentQuaternion(fromDir, toDir) {
-  const adjustAxis = t.crossVectors(fromDir, toDir).normalize();
-  const adjustAngle = fromDir.angleTo(toDir);
-  if (adjustAngle) {
-    const adjustQuat = q.setFromAxisAngle(adjustAxis, adjustAngle);
-    return adjustQuat;
+  function getAlignmentQuaternion(fromDir, toDir) {
+    const adjustAxis = t.crossVectors(fromDir, toDir).normalize();
+    const adjustAngle = fromDir.angleTo(toDir);
+    if (adjustAngle) {
+      const adjustQuat = q.setFromAxisAngle(adjustAxis, adjustAngle);
+      return adjustQuat;
+    }
+    return null;
   }
-  return null;
-}
 
-function getOriginalWorldPositions(rootBone) {
-  var worldPositions = []
-  var currentBone = rootBone;
-  while(currentBone) {
-    worldPositions.push(currentBone.getWorldPosition(new THREE.Vector3()))
-    currentBone = currentBone.children[0];
+  function getOriginalWorldPositions(rootBone, worldPos) {
+    rootBone.children.forEach((child) => {
+      var childWorldPos = child.getWorldPosition(new THREE.Vector3())
+      worldPos[child.id] = childWorldPos;
+      getOriginalWorldPositions(child, worldPos)
+    })
   }
-  return worldPositions;
-}
 
-function setZForward(rootBone) {
-  //get a list of world positions
-  var worldPositions = getOriginalWorldPositions(rootBone);
-  var parentBone = rootBone;
-  var i = 1;
-  //iterate down the chain
-  //TODO: support bone heirarchies -- only supports single chain now.
-  while (parentBone) {
-    var childBone = parentBone.children[0];
-    if (childBone) {
-      //reset parent bone quaternion
+  function setZForward(rootBone) {
+    var worldPos = {}
+    getOriginalWorldPositions(rootBone, worldPos)
+    updateTransformations(rootBone, worldPos);
+  }
+
+  function updateTransformations(parentBone, worldPos) {
+
+      var averagedDir = new THREE.Vector3();
+      parentBone.children.forEach((childBone) => {
+        //average the child bone world pos
+        var childBonePosWorld = worldPos[childBone.id];
+        averagedDir.add(childBonePosWorld);
+      });
+
+      averagedDir.multiplyScalar(1/(parentBone.children.length));
+
+      //set quaternion
       parentBone.quaternion.copy(RESETQUAT);
       parentBone.updateMatrixWorld();
       //get the child bone position in local coordinates
-      var childBonePosWorld = worldPositions[i].clone();
-      var childBoneDir = parentBone.worldToLocal(childBonePosWorld.clone()).normalize();
+      var childBoneDir = parentBone.worldToLocal(averagedDir).normalize();
       //set the direction to child bone to the forward direction
       var quat = getAlignmentQuaternion(FORWARD, childBoneDir);
       if (quat) {
@@ -47,11 +51,14 @@ function setZForward(rootBone) {
         parentBone.quaternion.premultiply(quat);
         parentBone.updateMatrixWorld();
         //set child bone position relative to the new parent matrix.
-        parentBone.worldToLocal(childBonePosWorld);
-        childBone.position.copy(childBonePosWorld);
+        parentBone.children.forEach((childBone) => {
+          var childBonePosWorld = worldPos[childBone.id].clone();
+          parentBone.worldToLocal(childBonePosWorld);
+          childBone.position.copy(childBonePosWorld);
+        });
       }
-    }
-    parentBone = parentBone.children[0];
-    i++;
+
+      parentBone.children.forEach((childBone) => {
+        updateTransformations(childBone, worldPos);
+      })
   }
-}
