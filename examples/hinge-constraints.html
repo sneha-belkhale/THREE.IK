@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>THREE.IK - skinned mesh test</title>
+    <title>THREE.IK - hinge constraint test</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <style>
@@ -73,17 +73,28 @@
                   skinning: true,
                   wireframe: true
                 })
-                this.target = new THREE.Object3D()
-                this.target.position.set(1,0,5)
+
+                this.target = new THREE.Mesh(
+                  new THREE.SphereGeometry(0.5),
+                  new THREE.MeshBasicMaterial({wireframe: true})
+                );
+                this.target.position.set(1,0,5.5)
                 this.scene.add(this.target)
 
                 var boneGroup = rootBone;
                 var ik = new IK.IK();
                 const chain = new IK.IKChain();
                 var currentBone = boneGroup
+                var constraintArray = [
+                  new IK.IKBallConstraint(90),
+                  new IK.IKHingeConstraint(180, new THREE.Vector3(-1,0,0)),
+                  new IK.IKHingeConstraint(180, new THREE.Vector3(-1,0,0)),
+                  new IK.IKHingeConstraint(100, new THREE.Vector3(-1,0,0)),
+                ];
+
                 for (let i = 0; i < 5; i++) {
-                  var constraints = [new IK.IKBallConstraint(90)];
                   const target = i === 4 ? this.target : null;
+                  const constraints = [constraintArray[i]];
                   chain.add(new IK.IKJoint(currentBone, { constraints }), { target });
                   currentBone = currentBone.children[0]
                 }
@@ -101,7 +112,7 @@
 
             update() {
               if(this.target){
-                this.target.position.y = -2 + 3*Math.sin(0.005*performance.now())
+                this.target.position.y = 2+4*Math.sin(0.003*performance.now())
               }
             }
         };

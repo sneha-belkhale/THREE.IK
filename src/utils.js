@@ -1,4 +1,4 @@
-import { Vector3, Matrix4 } from 'three';
+import { Vector3, Matrix4, Quaternion, Plane } from 'three';
 
 /**
  * A collection of utilities.
@@ -71,7 +71,8 @@ export function setQuaternionFromDirection(direction, up, target) {
   z.copy(direction);
   x.crossVectors(up, z);
 
-  if (x.lengthSq() === 0) {
+
+  if (x.lengthSq() == 0) {
     // parallel
     if (Math.abs(up.z) === 1) {
       z.x += 0.0001;
@@ -117,3 +118,33 @@ export function transformPoint(vector, matrix, target) {
   const w = (vector.x * e[3]) + (vector.y * e[7]) + (vector.z * e[11]) + e[15];
   target.set(x / w, y / w, z / w);
 };
+
+const t = new Vector3();
+const q = new Quaternion();
+const p = new Plane();
+
+export function getAlignmentQuaternion(fromDir, toDir) {
+  const adjustAxis = t.crossVectors(fromDir, toDir).normalize();
+  const adjustAngle = fromDir.angleTo(toDir);
+
+  if (adjustAngle > 0.01 && adjustAngle < 3.14) {
+    const adjustQuat = q.setFromAxisAngle(adjustAxis, adjustAngle);
+    return adjustQuat;
+  }
+  return null;
+}
+
+export function getAlignmentQuaternionOnPlane(toVector, fromVector, normal) {
+  p.normal = normal;
+  const projectedVec = p.projectPoint(toVector, new Vector3()).normalize();
+  const quat = getAlignmentQuaternion(fromVector, projectedVec);
+  return quat;
+}
+
+export function rotateOnAxis(bone, direction, axis) {
+  var forward = new Vector3(0,0,1).applyQuaternion(bone.quaternion);
+  var q = getAlignmentQuaternionOnPlane(direction,forward,axis);
+  if(q){
+    bone.quaternion.premultiply(q)
+  }
+}
