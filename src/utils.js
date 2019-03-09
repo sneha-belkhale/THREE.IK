@@ -9,6 +9,9 @@ const t1 = new Vector3();
 const t2 = new Vector3();
 const t3 = new Vector3();
 const m1 = new Matrix4();
+const t = new Vector3();
+const q = new Quaternion();
+const p = new Plane();
 
 /**
  * Returns the world position of object and sets
@@ -119,10 +122,14 @@ export function transformPoint(vector, matrix, target) {
   target.set(x / w, y / w, z / w);
 };
 
-const t = new Vector3();
-const q = new Quaternion();
-const p = new Plane();
-
+/**
+ * Aligns two vectors about their cross product. Returns a quaternion that will
+ * map the fromDir vector to the toDir vector.
+ *
+ * @param {THREE.Vector3} fromDir
+ * @param {THREE.Vector3} toDir
+ * @return {THREE.Quaternion | null}
+ */
 export function getAlignmentQuaternion(fromDir, toDir) {
   const adjustAxis = t.crossVectors(fromDir, toDir).normalize();
   const adjustAngle = fromDir.angleTo(toDir);
@@ -134,13 +141,30 @@ export function getAlignmentQuaternion(fromDir, toDir) {
   return null;
 }
 
-export function getAlignmentQuaternionOnPlane(toVector, fromVector, normal) {
+/**
+ * Aligns two vectors, but ensuring that the result is on a plane oriented by the normal param.
+ * Returns a quaternion that will map the fromDir vector to the toDir vector.
+ *
+ * @param {THREE.Vector3} fromDir
+ * @param {THREE.Vector3} toDir
+ * @param {THREE.Vector3} normal
+ * @return {THREE.Vector3 | normal}
+ */
+export function getAlignmentQuaternionOnPlane(toDir, fromDir, normal) {
   p.normal = normal;
-  const projectedVec = p.projectPoint(toVector, new Vector3()).normalize();
-  const quat = getAlignmentQuaternion(fromVector, projectedVec);
+  const projectedVec = p.projectPoint(toDir, new Vector3()).normalize();
+  const quat = getAlignmentQuaternion(fromDir, projectedVec);
   return quat;
 }
 
+/**
+ * Takes a three.js bone and rotates it on a (hinge) axis to the final
+ * direction.
+ *
+ * @param {THREE.BONE} bone
+ * @param {THREE.Vector3} direction
+ * @param {THREE.Vector3} axis
+ */
 export function rotateOnAxis(bone, direction, axis) {
   var forward = new Vector3(0,0,1).applyQuaternion(bone.quaternion);
   var q = getAlignmentQuaternionOnPlane(direction,forward,axis);
