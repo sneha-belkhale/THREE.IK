@@ -15,7 +15,7 @@
         }
 
         #info {
-            color: #fff;
+            color: #000;
             position: absolute;
             top: 10px;
             width: 100%;
@@ -25,7 +25,7 @@
         }
 
         #info a {
-            color: #046;
+            color: #2fa1d6;
             font-weight: bold;
         }
 
@@ -33,6 +33,9 @@
 </head>
 
 <body>
+    <div id="info">
+      skinned mesh example by <a href="https://codercat.tk" target="_blank" rel="noopener">codercat</a>
+    </div>
     <script src="scripts/dat.gui.js"></script>
     <script src="scripts/three.js"></script>
     <script src="scripts/OrbitControls.js"></script>
@@ -53,7 +56,7 @@
             setupIK() {
 
                 var fbxLoader = new THREE.FBXLoader();
-                fbxLoader.load('assets/rigTest-03.fbx', (rigGroup) => {
+                fbxLoader.load('assets/rigTest-02.fbx', (rigGroup) => {
                 this.scene.add(rigGroup)
                 rigGroup.updateMatrixWorld()
 
@@ -74,7 +77,7 @@
                   wireframe: true
                 })
                 this.target = new THREE.Object3D()
-                this.target.position.set(1,0,5)
+                this.target.position.set(0,0,5)
                 this.scene.add(this.target)
 
                 var boneGroup = rootBone;
@@ -102,7 +105,7 @@
 
             update() {
               if(this.target){
-                this.target.position.y = 1+Math.sin(0.005*performance.now())
+                this.target.position.y = 5 + Math.sin(0.005 * performance.now())
               }
             }
         };
