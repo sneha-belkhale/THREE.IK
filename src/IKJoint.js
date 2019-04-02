@@ -181,7 +181,7 @@ class IKJoint {
       this._updateMatrixWorld();
 
       this._worldToLocalDirection(direction);
-      setQuaternionFromDirection(direction, Y_AXIS, this.bone.quaternion);
+      setQuaternionFromDirection(direction, this._originalUp, this.bone.quaternion);
     } else {
       this.bone.position.copy(position);
     }

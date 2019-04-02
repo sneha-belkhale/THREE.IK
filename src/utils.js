@@ -22,19 +22,6 @@ export function getWorldPosition(object, target) {
 }
 
 /**
- * Returns the distance between two objects.
- *
- * @param {THREE.Object3D} obj1
- * @param {THREE.Object3D} obj2
- * @return {number}
- */
-export function getWorldDistance(obj1, obj2) {
-  getWorldPosition(obj1, t1);
-  getWorldPosition(obj2, t2);
-  return a.distanceTo(b);
-}
-
-/**
  * Sets the target to the centroid position between all passed in
  * positions.
  *
